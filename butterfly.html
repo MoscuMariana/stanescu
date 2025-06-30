@@ -79,12 +79,12 @@
     <main>
       <section
         class="position-relative section"
-        style="background-image: url(image/bg.png)"
+        style="background-image: url()"
       >
         <div class="r-container">
           <div
             class="image-overlay-bg"
-            style="background-image: url(image/dummy-img-1920x900.jpg)"
+            style="background-image: url()"
           ></div>
           <div
             class="row row-cols-1 row-cols-lg-2 position-relative"
@@ -105,8 +105,14 @@
                  
                   </div>
                   <p class="text-gray font-2 py-3">
-                    Acțiunea are loc în Nagasaki, Japonia, la începutul secolului XX. Cio-Cio-San (Madama Butterfly), o tânără gheișă, se căsătorește cu locotenentul american Pinkerton, crezând că mariajul lor este real. Pinkerton, însă, o consideră doar o aventură trecătoare. După plecarea sa, Butterfly îl așteaptă ani de zile, crescând fiul lor născut în secret. Când Pinkerton se întoarce, este alături de noua sa soție americană, venind doar pentru a lua copilul. Deznădăjduită, Cio-Cio-San își ia viața, rămânând un simbol tragic al iubirii și sacrificiului.
-                  </p>
+"Eu, personal, am fost puțin contrariată de faptul că primul
+spectacol, „Madama Butterfly” fusese programat chiar în 24
+decembrie, Seara de Crăciun, noaptea tuturor familiilor. Eram
+sigură că sala va fi aproape goală. Dar la un moment dat a venit
+în cabina unde mă pregăteam, un ofițer în uniformă care s-a
+prezentat: „Eu, care sunt răspunzător cu Paza și cu Pompierii, vă
+anunț că plec deoarece nu-mi pot lua răspunderea, fiind un
+public neverosimil de numeros!”.    <br>- <i style="color: #e86962;">Lucia Stănescu A fost o viață sau un vis?</i>              </p>
                   <div>
               
                   </div>
@@ -207,16 +213,14 @@
     </main>
 
     <!-- Footer -->
-    <footer>
        
-        <section>
-            <div class="r-container py-4 px-4">
-                <div class="text-center">
-                    <span class="text-gray">Copyright 2025 © All Right Reserved Moscu Mariana</span>
-                </div>
-            </div>
-        </section>
-    </footer>
+    <footer style="text-align:center; padding: 1rem; color: #666; font-size: 0.9rem;">
+  &copy; <span id="year"></span> Lucia Stănescu. Toate drepturile rezervate.
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
     <script src="js/vendor/fslightbox.js"></script>
 </body>
 
