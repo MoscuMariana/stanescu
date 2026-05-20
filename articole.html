@@ -1,0 +1,2458 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Articole și apariții · Lucia Stănescu</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600;1,9..144,900&family=Inter:wght@300;400;500;600&family=Italiana&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    /* Restrained, cinematic palette */
+    --black:#0c0c0c;
+    --black-soft:#141414;
+    --char:#1a1a1a;
+    --ink:#262626;
+
+    --bone:#ebe5d6;            /* warm bone-white */
+    --bone-soft:#d8d0bd;
+    --paper:#c4baa3;
+    --stone:#8a8474;
+
+    --rust:#9a4a2a;            /* burnt sienna accent */
+    --rust-deep:#6e3318;
+    --rust-glow:#b8593a;       /* highlight rust */
+    --gold:#b89968;            /* muted gold */
+    --gold-soft:#8f7752;
+    --gold-bright:#d4b88a;     /* bright accent for gradients */
+
+    --rule:rgba(184,153,104,0.22);
+    --rule-bone:rgba(235,229,214,0.12);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--black);
+    color:var(--bone);
+    font-family:'Fraunces', Georgia, serif;
+    font-optical-sizing:auto;
+    font-size:18px;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Subtle film grain over everything */
+  body::after{
+    content:"";
+    position:fixed;inset:0;
+    pointer-events:none;
+    z-index:1;
+    opacity:.07;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92  0 0 0 0 0.89  0 0 0 0 0.83  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode:overlay;
+  }
+
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+
+  .mono{font-family:'Inter', sans-serif}
+
+  /* ============== TOP BAR ============== */
+  .topbar{
+    position:fixed;top:0;left:0;right:0;
+    z-index:100;
+    padding:22px 48px;
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    background:rgba(12,12,12,0.0);
+    backdrop-filter:blur(0);
+    transition:background .5s ease, backdrop-filter .5s ease, padding .5s ease;
+    border-bottom:1px solid transparent;
+  }
+  .topbar.scrolled{
+    background:rgba(12,12,12,0.92);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    padding:14px 48px;
+    border-bottom:1px solid var(--rule-bone);
+  }
+
+  .top-left{
+    font-family:'Inter', sans-serif;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.3em;
+    color:var(--bone-soft);
+    text-transform:uppercase;
+  }
+  .top-left span{color:var(--rust);margin-right:10px}
+
+  .top-center{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:normal;
+    font-weight:400;
+    font-size:22px;
+    color:var(--bone);
+    letter-spacing:.06em;
+  }
+
+  .top-right{
+    display:flex;justify-content:flex-end;gap:32px;
+    font-family:'Inter', sans-serif;
+    font-size:10.5px;
+    font-weight:500;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+  }
+  .top-right a{
+    color:var(--bone-soft);
+    transition:color .3s;
+    position:relative;padding:4px 0;
+  }
+  .top-right a::after{
+    content:"";position:absolute;left:0;bottom:-2px;
+    width:0;height:1px;background:var(--rust);
+    transition:width .35s ease;
+  }
+  .top-right a:hover{color:var(--bone)}
+  .top-right a:hover::after{width:100%}
+
+  .nav-toggle{display:none;background:none;border:none;color:var(--bone);font-size:22px;cursor:pointer;justify-self:end}
+
+  @media (max-width: 920px){
+    .topbar{padding:16px 22px;grid-template-columns:1fr auto}
+    .topbar.scrolled{padding:12px 22px}
+    .top-center{display:none}
+    .top-right{
+      position:fixed;top:0;right:-100%;
+      height:100vh;width:78%;max-width:340px;
+      background:var(--black-soft);
+      flex-direction:column;justify-content:center;align-items:flex-start;
+      gap:32px;padding:60px 40px;
+      transition:right .5s ease;
+      border-left:1px solid var(--rule-bone);
+    }
+    .top-right.open{right:0}
+    .nav-toggle{display:block;z-index:101}
+  }
+
+  /* ============== HERO ============== */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    padding:130px 48px 60px;
+    display:flex;
+    flex-direction:column;
+    z-index:2;
+  }
+
+  .hero-top-meta{
+    max-width:1320px;
+    width:100%;
+    margin:0 auto 60px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:40px;
+    padding-bottom:24px;
+    border-bottom:1px solid var(--rule-bone);
+    font-family:'Inter', sans-serif;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.3em;
+    color:var(--stone);
+    text-transform:uppercase;
+  }
+  .hero-top-meta div span{display:block;color:var(--bone);margin-top:6px;font-size:13px}
+  .hero-top-meta .center{text-align:center}
+  .hero-top-meta .right{text-align:right}
+
+  .hero-main{
+    max-width:1320px;
+    width:100%;
+    margin:0 auto;
+    flex:1;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:80px;
+    align-items:center;
+  }
+
+  /* ---------- LEFT: portrait, full bleed ---------- */
+  .hero-portrait-wrap{
+    position:relative;
+    aspect-ratio:4/5;
+    max-height:78vh;
+  }
+  .hero-portrait-wrap::before{
+    content:"";
+    position:absolute;
+    inset:-22px;
+    border:1px solid var(--rule);
+    pointer-events:none;
+    z-index:0;
+  }
+  .hero-portrait-wrap::after{
+    content:"";
+    position:absolute;
+    inset:-12px;
+    border:1px solid var(--gold-soft);
+    pointer-events:none;
+    z-index:1;
+    opacity:.6;
+  }
+  /* Decorative gold corners on the portrait */
+  .pc{position:absolute;width:24px;height:24px;z-index:3;pointer-events:none}
+  .pc::before,.pc::after{content:"";position:absolute;background:var(--gold)}
+  .pc::before{width:100%;height:1px}
+  .pc::after{width:1px;height:100%}
+  .pc.tl{top:-12px;left:-12px}
+  .pc.tl::before{top:0;left:0}.pc.tl::after{top:0;left:0}
+  .pc.tr{top:-12px;right:-12px}
+  .pc.tr::before{top:0;right:0}.pc.tr::after{top:0;right:0}
+  .pc.bl{bottom:-12px;left:-12px}
+  .pc.bl::before{bottom:0;left:0}.pc.bl::after{bottom:0;left:0}
+  .pc.br{bottom:-12px;right:-12px}
+  .pc.br::before{bottom:0;right:0}.pc.br::after{bottom:0;right:0}
+
+  .hero-portrait{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--ink);
+    z-index:2;
+    box-shadow:
+      0 40px 100px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(184,153,104,0.15) inset;
+  }
+  .hero-portrait img{
+    width:100%;height:100%;
+    object-fit:cover;
+    object-position:center 25%;
+    /* Cinematic black & white treatment */
+    filter:grayscale(0.85) contrast(1.08) brightness(1.02);
+    transition:filter 1.5s ease, transform 8s ease;
+  }
+  .hero-portrait:hover img{
+    filter:grayscale(0.4) contrast(1.05) brightness(1.04);
+    transform:scale(1.03);
+  }
+  .hero-portrait::after{
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(180deg, transparent 0%, transparent 70%, rgba(12,12,12,0.6) 100%),
+      radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(12,12,12,0.3) 100%);
+    pointer-events:none;
+  }
+
+  .hero-portrait-label{
+    position:absolute;
+    bottom:24px;left:24px;
+    z-index:3;
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.3em;
+    color:var(--bone);
+    text-transform:uppercase;
+    background:rgba(12,12,12,0.7);
+    backdrop-filter:blur(8px);
+    padding:10px 16px;
+    border-left:2px solid var(--rust);
+  }
+  .hero-portrait-label strong{
+    display:block;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:14px;
+    letter-spacing:.04em;
+    color:var(--bone);
+    text-transform:none;
+    margin-top:4px;
+  }
+
+  /* ---------- RIGHT: name + meta ---------- */
+  .hero-name-block{
+    position:relative;
+    padding-left:0;
+  }
+
+  .hero-issue{
+    font-family:'Inter', sans-serif;
+    font-size:10.5px;
+    font-weight:500;
+    letter-spacing:.4em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-bottom:32px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .hero-issue::before{
+    content:"";display:block;width:24px;height:1px;background:var(--rust);
+  }
+
+  .hero-name{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size:clamp(72px, 10vw, 152px);
+    line-height:.88;
+    letter-spacing:-0.035em;
+    color:var(--bone);
+    margin-bottom:0;
+    font-variation-settings:"opsz" 144;
+  }
+  .hero-name .first{
+    display:block;
+    font-style:italic;
+    font-weight:300;
+    font-family:'Italiana', 'Fraunces', serif;
+    font-size:1.05em;
+    letter-spacing:-0.01em;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--paper) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .hero-name .last{
+    display:block;
+    font-weight:400;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--gold-bright) 60%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 4px 40px rgba(184,153,104,0.15);
+  }
+
+  .hero-dates-line{
+    margin-top:36px;
+    display:flex;align-items:center;gap:20px;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:22px;
+    color:var(--bone-soft);
+    letter-spacing:.02em;
+  }
+  .hero-dates-line .rule{
+    flex:0 0 60px;
+    height:1px;background:var(--rust);
+  }
+
+  .hero-tagline{
+    margin-top:28px;
+    font-family:'Inter', sans-serif;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.42em;
+    color:var(--stone);
+    text-transform:uppercase;
+    line-height:1.8;
+  }
+  .hero-tagline span{color:var(--bone)}
+
+  .hero-blurb{
+    margin-top:48px;
+    font-family:'Fraunces', serif;
+    font-size:21px;
+    line-height:1.55;
+    color:var(--bone-soft);
+    max-width:480px;
+    font-weight:300;
+  }
+  .hero-blurb em{font-style:italic;color:var(--bone)}
+
+  .hero-cta-row{
+    margin-top:50px;
+    display:flex;align-items:center;gap:32px;
+  }
+  .hero-cta{
+    display:inline-flex;align-items:center;gap:14px;
+    font-family:'Inter', sans-serif;
+    font-size:10.5px;
+    font-weight:500;
+    letter-spacing:.36em;
+    color:var(--bone);
+    text-transform:uppercase;
+    padding:18px 0;
+    border-bottom:1px solid var(--bone);
+    transition:all .4s ease;
+  }
+  .hero-cta:hover{
+    color:var(--rust);
+    border-color:var(--rust);
+    gap:22px;
+  }
+  .hero-cta-second{
+    font-family:'Inter', sans-serif;
+    font-size:10.5px;
+    font-weight:500;
+    letter-spacing:.36em;
+    color:var(--stone);
+    text-transform:uppercase;
+    transition:color .3s;
+  }
+  .hero-cta-second:hover{color:var(--bone)}
+
+  /* Bottom row */
+  .hero-bottom{
+    max-width:1320px;
+    width:100%;
+    margin:80px auto 0;
+    padding-top:24px;
+    border-top:1px solid var(--rule-bone);
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:40px;
+    align-items:center;
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.32em;
+    color:var(--stone);
+    text-transform:uppercase;
+  }
+  .hero-bottom .scroll-hint{
+    display:flex;align-items:center;gap:14px;
+    color:var(--bone-soft);
+  }
+  .hero-bottom .scroll-line{
+    width:60px;height:1px;background:var(--bone-soft);
+    position:relative;overflow:hidden;
+  }
+  .hero-bottom .scroll-line::after{
+    content:"";position:absolute;left:-30px;top:0;
+    width:30px;height:1px;background:var(--rust);
+    animation:scrollLine 2.5s ease-in-out infinite;
+  }
+  @keyframes scrollLine{
+    0%{left:-30px}
+    100%{left:60px}
+  }
+
+  @media (max-width: 980px){
+    .hero{padding:120px 22px 50px}
+    .hero-top-meta{grid-template-columns:1fr;gap:14px;text-align:left!important}
+    .hero-top-meta .center,.hero-top-meta .right{text-align:left}
+    .hero-main{grid-template-columns:1fr;gap:50px}
+    .hero-portrait{max-height:none;max-width:480px;margin:0 auto;width:100%}
+    .hero-bottom{grid-template-columns:1fr;gap:14px;text-align:center}
+  }
+
+  /* ============== SECTION SHELL ============== */
+  section.chapter{
+    position:relative;
+    padding:160px 48px;
+    z-index:2;
+  }
+  .chapter-inner{max-width:1320px;margin:0 auto;width:100%}
+
+  /* Museum-style chapter header */
+  .ch-head{
+    display:grid;
+    grid-template-columns:200px 1fr;
+    gap:60px;
+    margin-bottom:100px;
+    padding-bottom:32px;
+    border-bottom:1px solid var(--rule-bone);
+    align-items:end;
+  }
+  .ch-meta{
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.4em;
+    color:var(--rust);
+    text-transform:uppercase;
+    line-height:2;
+  }
+  .ch-meta-item{
+    color:var(--stone);
+    margin-bottom:6px;
+  }
+  .ch-meta-item strong{
+    color:var(--bone);
+    font-weight:500;
+    margin-left:14px;
+  }
+  .ch-head-title{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:clamp(42px, 5vw, 76px);
+    line-height:1;
+    letter-spacing:-0.025em;
+    color:var(--bone);
+    font-variation-settings:"opsz" 144;
+  }
+  .ch-head-title em{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--gold-bright) 60%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-size:1.05em;
+    letter-spacing:-0.01em;
+  }
+  .ch-head-num{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:14px;
+    color:var(--rust);
+    letter-spacing:.4em;
+    margin-bottom:18px;
+  }
+
+  @media (max-width: 760px){
+    .ch-head{grid-template-columns:1fr;gap:30px}
+  }
+
+  /* ============== BIOGRAPHY ============== */
+  .bio-grid{
+    display:grid;
+    grid-template-columns:1fr 1.4fr;
+    gap:100px;
+    align-items:start;
+  }
+
+  .bio-image-stack{
+    position:sticky;
+    top:120px;
+  }
+  .bio-image-main{
+    aspect-ratio:3/4;
+    overflow:hidden;
+    background:var(--ink);
+    position:relative;
+  }
+  .bio-image-main img{
+    width:100%;height:100%;
+    object-fit:cover;
+    object-position:center 22%;
+    filter:grayscale(0.95) contrast(1.05);
+  }
+  .bio-image-main::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, transparent 60%, rgba(12,12,12,0.4));
+  }
+  .bio-image-meta{
+    margin-top:22px;
+    padding-top:20px;
+    border-top:1px solid var(--rule-bone);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.3em;
+    color:var(--stone);
+    text-transform:uppercase;
+  }
+  .bio-image-meta strong{
+    display:block;
+    color:var(--bone);
+    font-weight:500;
+    margin-top:4px;
+    font-size:11px;
+  }
+
+  .bio-text{
+    padding-top:0;
+  }
+  .bio-text .lead{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:32px;
+    line-height:1.4;
+    color:var(--bone);
+    margin-bottom:50px;
+    letter-spacing:-0.01em;
+    font-variation-settings:"opsz" 144;
+  }
+  .bio-text .lead em{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:normal;
+    color:transparent;
+    background:linear-gradient(180deg, var(--gold-bright) 0%, var(--rust-glow) 60%, var(--rust) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-size:1.05em;
+  }
+
+  .bio-text > p{
+    font-size:18.5px;
+    line-height:1.85;
+    color:var(--bone-soft);
+    margin-bottom:24px;
+    font-weight:300;
+  }
+  .bio-text > p:first-of-type:not(.lead)::first-letter{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:normal;
+    font-weight:400;
+    font-size:5.5em;
+    float:left;
+    line-height:.85;
+    margin:8px 14px 0 0;
+    color:transparent;
+    background:linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 60%, var(--rust) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .bio-text em{
+    color:var(--bone);
+    font-style:italic;
+  }
+
+  @media (max-width: 980px){
+    section.chapter{padding:100px 22px}
+    .bio-grid{grid-template-columns:1fr;gap:50px}
+    .bio-image-stack{position:relative;top:0;max-width:460px;margin:0 auto}
+  }
+
+  /* ============== FACTS ROW ============== */
+  .facts{
+    margin-top:100px;
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    border-top:1px solid var(--rule-bone);
+    border-bottom:1px solid var(--rule-bone);
+  }
+  .fact{
+    padding:50px 32px;
+    border-right:1px solid var(--rule-bone);
+    position:relative;
+  }
+  .fact:last-child{border-right:none}
+  .fact-label{
+    font-family:'Inter', sans-serif;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:.4em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .fact-num{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size:72px;
+    line-height:.95;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--gold-bright) 70%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    letter-spacing:-0.03em;
+    margin-bottom:10px;
+    font-variation-settings:"opsz" 144;
+  }
+  .fact-num em{font-style:italic;font-weight:300;color:var(--gold);background:none;-webkit-text-fill-color:var(--gold)}
+  .fact-desc{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:14.5px;
+    color:var(--stone);
+    line-height:1.4;
+  }
+  @media (max-width: 760px){
+    .facts{grid-template-columns:1fr 1fr}
+    .fact:nth-child(2){border-right:none}
+    .fact:nth-child(-n+2){border-bottom:1px solid var(--rule-bone)}
+  }
+
+  /* ============== TIMELINE ============== */
+  .ch-timeline{
+    border-top:1px solid var(--rule-bone);
+  }
+  .tl-entry{
+    display:grid;
+    grid-template-columns:180px 1fr 1fr;
+    gap:60px;
+    padding:54px 0;
+    border-bottom:1px solid var(--rule-bone);
+    align-items:start;
+    transition:padding .5s ease, background .5s ease;
+    position:relative;
+  }
+  .tl-entry::before{
+    content:"";position:absolute;
+    left:0;top:0;height:100%;
+    width:2px;background:var(--rust);
+    transform:scaleY(0);transform-origin:top;
+    transition:transform .5s ease;
+  }
+  .tl-entry:hover{padding-left:28px;background:linear-gradient(90deg, rgba(154,74,42,0.04), transparent 60%)}
+  .tl-entry:hover::before{transform:scaleY(1)}
+
+  .tl-yr{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+  }
+  .tl-yr-big{
+    font-size:68px;
+    line-height:.9;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--gold-bright) 70%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    letter-spacing:-0.03em;
+    font-variation-settings:"opsz" 144;
+  }
+  .tl-yr-sub{
+    font-family:'Inter', sans-serif;
+    font-style:normal;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:.4em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-top:10px;
+  }
+
+  .tl-body h4{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-style:italic;
+    font-size:32px;
+    line-height:1.2;
+    color:var(--bone);
+    margin-bottom:14px;
+    letter-spacing:-0.015em;
+    font-variation-settings:"opsz" 144;
+  }
+  .tl-body p{
+    color:var(--bone-soft);
+    font-size:17px;
+    line-height:1.75;
+    font-weight:300;
+  }
+
+  .tl-side{
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.36em;
+    color:var(--stone);
+    text-transform:uppercase;
+    line-height:2;
+    padding-top:6px;
+  }
+  .tl-side strong{
+    display:block;
+    color:var(--bone);
+    font-weight:500;
+    margin-top:4px;
+    letter-spacing:.32em;
+  }
+
+  @media (max-width: 880px){
+    .tl-entry{grid-template-columns:1fr;gap:14px}
+    .tl-yr-big{font-size:48px}
+  }
+
+  /* ============== ROLES — film catalog ============== */
+  .repertoire-intro{
+    max-width:760px;
+    margin-bottom:80px;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:24px;
+    line-height:1.55;
+    color:var(--bone-soft);
+    letter-spacing:-0.005em;
+  }
+  .repertoire-intro em{color:var(--rust);font-style:normal}
+
+  .roles{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:0;
+    border-top:1px solid var(--rule-bone);
+  }
+  .role{
+    padding:60px 32px 50px;
+    border-right:1px solid var(--rule-bone);
+    border-bottom:1px solid var(--rule-bone);
+    position:relative;
+    transition:background .55s ease;
+  }
+  .role:nth-child(3n){border-right:none}
+
+  .role::before{
+    content:"";position:absolute;
+    top:0;left:0;width:0;height:1px;
+    background:linear-gradient(90deg, transparent, var(--rust), var(--gold), transparent);
+    transition:width .7s ease;
+  }
+  .role:hover{background:linear-gradient(180deg, rgba(184,153,104,0.04), rgba(154,74,42,0.02) 60%, transparent)}
+  .role:hover::before{width:100%}
+
+  .role-flourish{
+    width:40px;height:14px;
+    margin:0 auto 28px;
+    display:block;
+    color:var(--rust);
+    opacity:.7;
+  }
+  .role-flourish svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1}
+
+  .role-num{
+    font-family:'Inter', sans-serif;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:.4em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-bottom:24px;
+    text-align:center;
+  }
+  .role-name{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-weight:400;
+    font-size:54px;
+    line-height:1;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--paper) 70%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin-bottom:20px;
+    letter-spacing:-0.015em;
+    text-align:center;
+  }
+  .role-opera{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:17px;
+    color:var(--bone-soft);
+    margin-bottom:30px;
+    font-weight:300;
+    text-align:center;
+  }
+  .role-meta{
+    padding-top:20px;
+    border-top:1px solid var(--rule-bone);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'Inter', sans-serif;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:.32em;
+    color:var(--stone);
+    text-transform:uppercase;
+  }
+  .role-meta strong{color:var(--bone);font-weight:500}
+
+  @media (max-width: 880px){
+    .roles{grid-template-columns:1fr 1fr}
+    .role:nth-child(3n){border-right:1px solid var(--rule-bone)}
+    .role:nth-child(2n){border-right:none}
+  }
+  @media (max-width: 540px){
+    .roles{grid-template-columns:1fr}
+    .role{border-right:none!important}
+  }
+
+  /* ============== TOURS ============== */
+  .tours{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:80px;
+    align-items:start;
+  }
+
+  .tours-text h3{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size:clamp(36px, 5vw, 64px);
+    line-height:1.05;
+    color:var(--bone);
+    margin-bottom:36px;
+    letter-spacing:-0.025em;
+    font-variation-settings:"opsz" 144;
+  }
+  .tours-text h3 em{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:normal;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--gold-bright) 60%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-weight:400;
+    font-size:1.05em;
+  }
+
+  .tours-text p{
+    color:var(--bone-soft);
+    font-size:18px;
+    line-height:1.85;
+    margin-bottom:22px;
+    font-weight:300;
+    max-width:520px;
+  }
+
+  .tours-list{
+    margin-top:50px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:0;
+    border-top:1px solid var(--rule-bone);
+    max-width:520px;
+  }
+  .tour-line{
+    display:grid;
+    grid-template-columns:50px 1fr auto;
+    gap:24px;
+    padding:18px 0;
+    border-bottom:1px solid var(--rule-bone);
+    align-items:center;
+    transition:padding-left .35s ease;
+  }
+  .tour-line:hover{padding-left:14px}
+  .tour-num{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:18px;
+    color:var(--rust);
+  }
+  .tour-name{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    color:var(--bone);
+    font-style:italic;
+    font-weight:400;
+  }
+  .tour-tag{
+    font-family:'Inter', sans-serif;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:.36em;
+    color:var(--stone);
+    text-transform:uppercase;
+  }
+
+  .tours-image{
+    position:sticky;
+    top:120px;
+    aspect-ratio:4/5;
+    overflow:hidden;
+    background:linear-gradient(135deg, var(--ink), var(--black));
+  }
+
+  @media (max-width: 980px){
+    .tours{grid-template-columns:1fr;gap:50px}
+    .tours-image{position:relative;top:0;max-width:480px;margin:0 auto}
+  }
+
+  /* ============== HONOR ============== */
+  .honor-section{
+    padding:200px 48px;
+    text-align:center;
+    background:linear-gradient(180deg, transparent, rgba(154,74,42,0.04), transparent);
+    position:relative;
+    z-index:2;
+    overflow:hidden;
+  }
+  .honor-section::before{
+    content:"";position:absolute;top:0;left:50%;
+    transform:translateX(-50%);
+    width:120px;height:1px;
+    background:var(--rust);
+  }
+  .honor-section::after{
+    content:"";position:absolute;bottom:0;left:50%;
+    transform:translateX(-50%);
+    width:120px;height:1px;
+    background:var(--rust);
+  }
+
+  .honor-tag{
+    font-family:'Inter', sans-serif;
+    font-size:10.5px;
+    font-weight:500;
+    letter-spacing:.55em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-bottom:42px;
+  }
+  .honor-year{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:normal;
+    font-weight:400;
+    font-size:clamp(140px, 18vw, 280px);
+    line-height:.85;
+    color:transparent;
+    -webkit-text-stroke:1px var(--gold);
+    text-stroke:1px var(--gold);
+    letter-spacing:-0.04em;
+    margin-bottom:30px;
+    user-select:none;
+    background:linear-gradient(180deg, rgba(212,184,138,0.15) 0%, transparent 70%);
+    -webkit-background-clip:text;
+    background-clip:text;
+  }
+  .honor-title{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(36px, 4.5vw, 64px);
+    line-height:1.15;
+    color:var(--bone);
+    margin-bottom:36px;
+    max-width:920px;
+    margin-left:auto;margin-right:auto;
+    letter-spacing:-0.02em;
+    font-variation-settings:"opsz" 144;
+  }
+  .honor-title strong{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-weight:400;
+    font-style:normal;
+    background:linear-gradient(180deg, var(--gold-bright) 0%, var(--rust-glow) 60%, var(--rust) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-size:1.05em;
+  }
+  .honor-text{
+    max-width:680px;
+    margin:0 auto 50px;
+    color:var(--bone-soft);
+    font-size:19px;
+    line-height:1.85;
+    font-weight:300;
+  }
+  .honor-text em{color:var(--bone);font-style:italic}
+  .honor-stamp{
+    display:inline-flex;align-items:center;gap:18px;
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.5em;
+    color:var(--stone);
+    text-transform:uppercase;
+  }
+  .honor-stamp .l{width:30px;height:1px;background:var(--stone)}
+
+  /* ============== FOOTER ============== */
+  footer{
+    padding:140px 48px 50px;
+    border-top:1px solid var(--rule-bone);
+    background:var(--black-soft);
+    position:relative;
+    z-index:2;
+  }
+  .foot-grid{
+    max-width:1320px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1.5fr 1fr 1fr;
+    gap:60px;
+    margin-bottom:80px;
+    padding-bottom:60px;
+    border-bottom:1px solid var(--rule-bone);
+  }
+  .foot-name{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size:72px;
+    line-height:.95;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--gold-bright) 60%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    letter-spacing:-0.03em;
+    margin-bottom:18px;
+    font-variation-settings:"opsz" 144;
+  }
+  .foot-name em{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:normal;
+    font-weight:400;
+    font-size:1.05em;
+  }
+  .foot-dates{
+    font-family:'Inter', sans-serif;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.42em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-bottom:30px;
+  }
+  .foot-blurb{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    color:var(--bone-soft);
+    font-size:19px;
+    max-width:480px;
+    line-height:1.6;
+  }
+  .foot-col h5{
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.42em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-bottom:20px;
+  }
+  .foot-col ul{list-style:none}
+  .foot-col li{
+    font-family:'Fraunces', serif;
+    font-size:16px;
+    color:var(--bone-soft);
+    margin-bottom:10px;
+    font-weight:300;
+  }
+  .foot-col li em{font-style:italic;color:var(--bone)}
+
+  .foot-base{
+    max-width:1320px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.36em;
+    color:var(--stone);
+    text-transform:uppercase;
+  }
+
+  @media (max-width: 880px){
+    .foot-grid{grid-template-columns:1fr;gap:40px}
+    .foot-base{flex-direction:column;gap:14px;text-align:center}
+  }
+
+  /* ============== ARTICOLE PAGE - SPECIAL STYLES ============== */
+
+  /* Hero */
+  .articles-hero{
+    position:relative;
+    min-height:90vh;
+    padding:170px 48px 90px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    z-index:2;
+  }
+  .articles-hero::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 30%, rgba(154,74,42,0.08), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(184,153,104,0.06), transparent 60%);
+    z-index:0;
+    pointer-events:none;
+  }
+  .articles-hero-inner{
+    max-width:1100px;
+    width:100%;
+    margin:0 auto;
+    text-align:center;
+    position:relative;
+    z-index:2;
+  }
+  .ah-eyebrow{
+    font-family:'Inter', sans-serif;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.55em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-bottom:48px;
+    display:flex;align-items:center;justify-content:center;gap:18px;
+  }
+  .ah-eyebrow .l{width:50px;height:1px;background:var(--rust)}
+
+  .ah-title{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size:clamp(48px, 7.5vw, 116px);
+    line-height:.95;
+    letter-spacing:-0.03em;
+    color:var(--bone);
+    margin-bottom:30px;
+    font-variation-settings:"opsz" 144;
+  }
+  .ah-title .it{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:normal;
+    font-weight:400;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--gold-bright) 60%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-size:1.05em;
+    display:inline-block;
+  }
+  .ah-sub{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(18px, 2.2vw, 24px);
+    line-height:1.55;
+    color:var(--bone-soft);
+    max-width:680px;
+    margin:0 auto 56px;
+    font-variation-settings:"opsz" 144;
+  }
+  .ah-meta-row{
+    display:flex;justify-content:center;align-items:center;
+    gap:48px;
+    padding-top:36px;
+    border-top:1px solid var(--rule-bone);
+    flex-wrap:wrap;
+  }
+  .ah-meta-item{
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.4em;
+    color:var(--stone);
+    text-transform:uppercase;
+    text-align:center;
+  }
+  .ah-meta-item strong{
+    display:block;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    color:var(--bone);
+    font-size:24px;
+    margin-top:8px;
+    letter-spacing:-0.01em;
+    text-transform:none;
+    font-variation-settings:"opsz" 144;
+  }
+  .ah-meta-divider{width:1px;height:40px;background:var(--rule-bone)}
+
+  @media (max-width:760px){
+    .articles-hero{padding:140px 22px 60px}
+    .ah-meta-divider{display:none}
+    .ah-meta-row{gap:24px;flex-direction:column}
+  }
+
+  /* ============== INTERVIEWS / VIDEOS ============== */
+  .videos-section{
+    padding:140px 48px;
+    z-index:2;
+    position:relative;
+    background:linear-gradient(180deg, transparent, rgba(154,74,42,0.03), transparent);
+  }
+  .videos-grid{
+    max-width:1320px;
+    margin:60px auto 0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:50px;
+  }
+  .video-card{
+    position:relative;
+    transition:transform .55s cubic-bezier(.2,.7,.2,1);
+  }
+  .video-card:hover{transform:translateY(-6px)}
+
+  .video-wrap{
+    position:relative;
+    aspect-ratio:16/9;
+    background:var(--ink);
+    overflow:hidden;
+    box-shadow:
+      0 30px 70px rgba(0,0,0,0.5),
+      0 0 0 1px var(--gold-soft) inset;
+  }
+  .video-wrap::before{
+    content:"";position:absolute;
+    inset:-12px;
+    border:1px solid var(--rule);
+    pointer-events:none;
+    z-index:0;
+  }
+  .video-wrap iframe{
+    position:relative;
+    width:100%;height:100%;
+    border:0;
+    z-index:1;
+  }
+  /* Thumbnail with play overlay (before user clicks) */
+  .video-thumb{
+    position:relative;
+    width:100%;height:100%;
+    background-size:cover;
+    background-position:center;
+    cursor:pointer;
+    z-index:1;
+    transition:filter .5s ease;
+  }
+  .video-thumb::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(12,12,12,0.2) 0%, rgba(12,12,12,0.5) 100%);
+    transition:opacity .4s ease;
+  }
+  .video-thumb:hover::before{opacity:.5}
+  .video-play{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%, -50%);
+    width:84px;height:84px;
+    border-radius:50%;
+    background:linear-gradient(135deg, rgba(212,184,138,0.95), rgba(184,153,104,0.95));
+    display:flex;align-items:center;justify-content:center;
+    transition:all .4s ease;
+    box-shadow:
+      0 0 0 1px rgba(244,234,210,0.4) inset,
+      0 12px 40px rgba(0,0,0,0.5);
+    z-index:2;
+  }
+  .video-thumb:hover .video-play{
+    transform:translate(-50%, -50%) scale(1.08);
+    box-shadow:
+      0 0 0 1px rgba(244,234,210,0.6) inset,
+      0 16px 50px rgba(0,0,0,0.7),
+      0 0 60px rgba(212,184,138,0.3);
+  }
+  .video-play svg{
+    width:28px;height:28px;
+    fill:var(--ink);
+    margin-left:4px;
+  }
+
+  .video-caption{
+    margin-top:28px;
+    padding-top:22px;
+    border-top:1px solid var(--rule-bone);
+  }
+  .video-tag{
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.4em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-bottom:14px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .video-tag::before{
+    content:"";display:block;
+    width:8px;height:8px;
+    background:var(--rust);
+    border-radius:50%;
+  }
+  .video-title{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-weight:400;
+    font-size:32px;
+    line-height:1.15;
+    color:var(--bone);
+    margin-bottom:14px;
+    letter-spacing:-0.015em;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--paper) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .video-desc{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:17px;
+    line-height:1.65;
+    color:var(--bone-soft);
+    font-variation-settings:"opsz" 144;
+  }
+  .video-source{
+    margin-top:18px;
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:'Inter', sans-serif;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:.36em;
+    color:var(--stone);
+    text-transform:uppercase;
+  }
+  .video-source a{
+    color:var(--gold);
+    border-bottom:1px solid var(--gold-soft);
+    padding-bottom:4px;
+    transition:all .35s ease;
+  }
+  .video-source a:hover{
+    color:var(--gold-bright);
+    border-color:var(--gold-bright);
+  }
+
+  @media (max-width:880px){
+    .videos-grid{grid-template-columns:1fr;gap:40px}
+    .videos-section{padding:90px 22px}
+  }
+
+  /* ============== ARTICLES LIST ============== */
+  .articles-section{
+    padding:160px 48px;
+    z-index:2;
+    position:relative;
+  }
+  .articles-list{
+    max-width:1180px;
+    margin:80px auto 0;
+    border-top:1px solid var(--gold);
+  }
+  .article-row{
+    display:grid;
+    grid-template-columns:160px 1fr auto;
+    gap:60px;
+    padding:48px 0;
+    border-bottom:1px solid var(--rule-bone);
+    align-items:start;
+    transition:padding-left .5s ease, background .5s ease;
+    position:relative;
+  }
+  .article-row::before{
+    content:"";position:absolute;
+    left:0;top:0;height:100%;
+    width:2px;
+    background:linear-gradient(180deg, var(--rust-glow), var(--gold));
+    transform:scaleY(0);
+    transform-origin:top;
+    transition:transform .55s ease;
+  }
+  .article-row:hover{
+    padding-left:28px;
+    background:linear-gradient(90deg, rgba(184,153,104,0.03), transparent 60%);
+  }
+  .article-row:hover::before{transform:scaleY(1)}
+
+  .article-date{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    font-variation-settings:"opsz" 144;
+  }
+  .article-date-y{
+    font-size:48px;
+    line-height:.9;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--gold-bright) 70%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    letter-spacing:-0.02em;
+  }
+  .article-date-d{
+    font-family:'Inter', sans-serif;
+    font-style:normal;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:.42em;
+    color:var(--rust);
+    text-transform:uppercase;
+    margin-top:10px;
+  }
+
+  .article-body h4{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-weight:400;
+    font-size:28px;
+    line-height:1.25;
+    color:var(--bone);
+    margin-bottom:14px;
+    letter-spacing:-0.01em;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--paper) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .article-body p{
+    color:var(--bone-soft);
+    font-size:16.5px;
+    line-height:1.7;
+    margin-bottom:16px;
+    font-weight:300;
+    max-width:680px;
+  }
+  .article-body p em{color:var(--bone);font-style:italic}
+  .article-source{
+    font-family:'Inter', sans-serif;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:.36em;
+    color:var(--stone);
+    text-transform:uppercase;
+    margin-top:8px;
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .article-source em{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    color:var(--gold);
+    text-transform:none;
+    letter-spacing:.02em;
+    font-size:14px;
+  }
+
+  .article-action{
+    align-self:start;
+    padding-top:8px;
+  }
+  .article-link{
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:'Inter', sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.4em;
+    color:var(--gold);
+    text-transform:uppercase;
+    padding:10px 0;
+    border-bottom:1px solid var(--gold-soft);
+    transition:all .4s ease;
+    white-space:nowrap;
+  }
+  .article-link:hover{
+    color:var(--gold-bright);
+    border-color:var(--gold-bright);
+    gap:18px;
+  }
+
+  @media (max-width:880px){
+    .article-row{grid-template-columns:1fr;gap:14px;padding:32px 0}
+    .article-date-y{font-size:36px}
+    .article-action{padding-top:14px}
+    .articles-section{padding:90px 22px}
+  }
+
+  /* ============== TRIBUTE QUOTE ============== */
+  .tribute-quote{
+    padding:160px 48px;
+    text-align:center;
+    position:relative;
+    z-index:2;
+    background:
+      radial-gradient(ellipse at center, rgba(154,74,42,0.08), transparent 60%),
+      linear-gradient(180deg, transparent, rgba(184,153,104,0.04), transparent);
+  }
+  .tribute-quote::before,
+  .tribute-quote::after{
+    content:"";position:absolute;left:50%;
+    transform:translateX(-50%);
+    width:80px;height:1px;
+    background:var(--gold);
+  }
+  .tribute-quote::before{top:0}
+  .tribute-quote::after{bottom:0}
+
+  .tribute-mark{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-size:140px;
+    line-height:0;
+    color:var(--rust);
+    opacity:.4;
+    height:60px;
+    display:block;
+    margin-bottom:30px;
+  }
+  .tribute-text{
+    max-width:920px;
+    margin:0 auto 32px;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(26px, 3.2vw, 40px);
+    line-height:1.4;
+    color:var(--bone);
+    letter-spacing:-0.01em;
+    font-variation-settings:"opsz" 144;
+  }
+  .tribute-text em{
+    font-family:'Italiana', 'Fraunces', serif;
+    font-style:normal;
+    background:linear-gradient(180deg, var(--gold-bright), var(--rust));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-size:1.05em;
+  }
+  .tribute-cite{
+    font-family:'Inter', sans-serif;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.5em;
+    color:var(--gold);
+    text-transform:uppercase;
+  }
+
+  /* ============== REVEAL ============== */
+  .reveal{
+    opacity:0;
+    transform:translateY(36px);
+    transition:opacity 1.2s cubic-bezier(.2,.7,.2,1), transform 1.2s cubic-bezier(.2,.7,.2,1);
+  }
+  .reveal.in{opacity:1;transform:translateY(0)}
+  .reveal-d1{transition-delay:.12s}
+  .reveal-d2{transition-delay:.24s}
+  .reveal-d3{transition-delay:.36s}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes slowZoom{from{transform:scale(1.06);opacity:0}to{transform:scale(1);opacity:1}}
+
+  .hero-top-meta,.hero-issue,.hero-name,.hero-dates-line,.hero-tagline,.hero-blurb,.hero-cta-row,.hero-bottom{animation:fadeIn 1.2s cubic-bezier(.2,.7,.2,1) both}
+  .hero-issue{animation-delay:.1s}
+  .hero-name{animation-delay:.25s}
+  .hero-dates-line{animation-delay:.45s}
+  .hero-tagline{animation-delay:.55s}
+  .hero-blurb{animation-delay:.65s}
+  .hero-cta-row{animation-delay:.78s}
+  .hero-bottom{animation-delay:.9s}
+  .hero-portrait{animation:slowZoom 1.6s cubic-bezier(.2,.7,.2,1) both;animation-delay:.15s}
+
+ /* ============== TOP BAR — LUX ============== */
+  .topbar{
+    position:fixed;top:0;left:0;right:0;
+    z-index:100;
+    padding:20px 56px;
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    background:linear-gradient(180deg, rgba(12,12,12,0.55) 0%, rgba(12,12,12,0.15) 70%, transparent 100%);
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
+    transition:background .55s ease, backdrop-filter .55s ease, padding .55s ease, border-color .55s ease;
+    border-bottom:1px solid transparent;
+  }
+  .topbar.scrolled{
+    background:rgba(10,10,10,0.94);
+    backdrop-filter:blur(18px) saturate(1.1);
+    -webkit-backdrop-filter:blur(18px) saturate(1.1);
+    padding:12px 56px;
+    border-bottom:1px solid var(--rule);
+    box-shadow:0 18px 50px -20px rgba(0,0,0,0.6);
+  }
+  /* Hairline gold accent under the topbar when scrolled */
+  .topbar.scrolled::after{
+    content:"";
+    position:absolute;left:50%;bottom:-1px;
+    width:120px;height:1px;
+    transform:translateX(-50%);
+    background:linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+    opacity:.55;
+  }
+
+  /* LEFT — small status with rust dot */
+  .top-left{
+    font-family:'Inter', sans-serif;
+    font-size:10.5px;
+    font-weight:500;
+    letter-spacing:.32em;
+    color:var(--bone-soft);
+    text-transform:uppercase;
+    display:flex;align-items:center;gap:14px;
+  }
+  .top-left .pulse{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--rust);
+    box-shadow:0 0 0 0 rgba(154,74,42,0.6);
+    animation:pulse 2.6s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(154,74,42,0.55)}
+    70%{box-shadow:0 0 0 10px rgba(154,74,42,0)}
+    100%{box-shadow:0 0 0 0 rgba(154,74,42,0)}
+  }
+  .top-left .sep-v{
+    width:1px;height:14px;background:var(--rule-bone);
+  }
+
+  /* CENTER — monogram brand mark */
+  .top-center{
+    display:flex;align-items:center;gap:18px;
+    font-family:'Italiana', 'Fraunces', serif;
+    font-weight:400;
+    color:var(--bone);
+    letter-spacing:.08em;
+    position:relative;
+  }
+  .top-center .ornament{
+    width:48px;height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+    position:relative;
+  }
+  .top-center .ornament::before,
+  .top-center .ornament::after{
+    content:"";position:absolute;top:50%;
+    width:4px;height:4px;border-radius:50%;
+    background:var(--gold);
+    transform:translateY(-50%);
+    opacity:.7;
+  }
+  .top-center .ornament.left::after{right:-2px}
+  .top-center .ornament.right::before{left:-2px}
+  .top-center .brand{
+    font-size:22px;
+    line-height:1;
+    padding:0 2px;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--bone-soft) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    white-space:nowrap;
+  }
+  .top-center .brand em{
+    font-family:'Italiana', serif;
+    font-style:italic;
+    color:var(--gold);
+    -webkit-text-fill-color:var(--gold);
+    margin-left:4px;
+  }
+  .topbar.scrolled .top-center .brand{font-size:19px}
+
+  /* RIGHT — nav links */
+  .top-right{
+    display:flex;justify-content:flex-end;align-items:center;gap:34px;
+    font-family:'Inter', sans-serif;
+    font-size:10.5px;
+    font-weight:500;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+  }
+  .top-right > a, .top-right .has-drop > .nav-link{
+    color:var(--bone-soft);
+    transition:color .35s ease;
+    position:relative;padding:6px 0;
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;
+    background:none;border:none;
+    font:inherit;letter-spacing:inherit;text-transform:inherit;
+  }
+  .top-right > a::after, .top-right .has-drop > .nav-link::after{
+    content:"";position:absolute;left:50%;bottom:-1px;
+    width:0;height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+    transition:width .45s cubic-bezier(.2,.7,.2,1), left .45s cubic-bezier(.2,.7,.2,1);
+  }
+  .top-right > a:hover, .top-right .has-drop:hover > .nav-link{color:var(--bone)}
+  .top-right > a:hover::after, .top-right .has-drop:hover > .nav-link::after{width:100%;left:0}
+  .top-right .has-drop > .nav-link .caret{
+    width:6px;height:6px;
+    border-right:1px solid currentColor;
+    border-bottom:1px solid currentColor;
+    transform:rotate(45deg) translateY(-2px);
+    transition:transform .3s ease;
+    opacity:.7;
+  }
+  .top-right .has-drop:hover > .nav-link .caret{transform:rotate(-135deg) translateY(2px)}
+
+  /* DROPDOWN — Galerie */
+  .has-drop{position:relative}
+  .drop-panel{
+    position:absolute;top:calc(100% + 18px);right:-12px;
+    min-width:260px;
+    background:linear-gradient(180deg, rgba(20,20,20,0.98), rgba(12,12,12,0.98));
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--rule);
+    box-shadow:
+      0 30px 80px -10px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(184,153,104,0.05) inset;
+    padding:18px 6px;
+    opacity:0;visibility:hidden;
+    transform:translateY(-6px);
+    transition:opacity .35s ease, transform .35s ease, visibility 0s linear .35s;
+    pointer-events:none;
+  }
+  .drop-panel::before{
+    content:"";position:absolute;top:-1px;right:34px;
+    width:14px;height:14px;
+    background:rgba(20,20,20,0.98);
+    border-top:1px solid var(--rule);
+    border-left:1px solid var(--rule);
+    transform:rotate(45deg) translateY(-7px);
+  }
+  .drop-panel::after{
+    content:"";position:absolute;top:0;left:18px;right:18px;height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold-soft) 50%, transparent);
+    opacity:.6;
+  }
+  .has-drop:hover .drop-panel,
+  .has-drop.open .drop-panel{
+    opacity:1;visibility:visible;transform:translateY(0);
+    transition:opacity .4s ease, transform .4s ease, visibility 0s;
+    pointer-events:auto;
+  }
+  /* invisible bridge to keep hover */
+  .has-drop::before{
+    content:"";position:absolute;top:100%;left:0;right:0;height:24px;
+  }
+  .drop-panel a{
+    display:flex;align-items:center;gap:14px;
+    padding:11px 22px;
+    font-family:'Fraunces', serif;
+    font-size:14px;
+    font-weight:400;
+    letter-spacing:.02em;
+    text-transform:none;
+    color:var(--bone-soft);
+    transition:color .3s ease, padding-left .3s ease, background .3s ease;
+    position:relative;
+  }
+  .drop-panel a .num{
+    font-family:'Inter', sans-serif;
+    font-size:9px;
+    font-weight:500;
+    letter-spacing:.25em;
+    color:var(--gold-soft);
+    width:22px;
+  }
+  .drop-panel a:hover{
+    color:var(--bone);
+    padding-left:28px;
+    background:linear-gradient(90deg, rgba(184,153,104,0.06), transparent);
+  }
+  .drop-panel a:hover .num{color:var(--gold)}
+
+  .nav-toggle{
+    display:none;background:none;border:none;
+    color:var(--bone);cursor:pointer;
+    justify-self:end;
+    width:32px;height:32px;
+    position:relative;
+    padding:0;
+  }
+  .nav-toggle span{
+    position:absolute;left:6px;right:6px;height:1px;
+    background:var(--bone);
+    transition:transform .35s ease, top .35s ease, opacity .25s ease;
+  }
+  .nav-toggle span:nth-child(1){top:11px}
+  .nav-toggle span:nth-child(2){top:16px;width:14px;left:auto;right:6px;background:var(--gold)}
+  .nav-toggle span:nth-child(3){top:21px}
+  .nav-toggle.active span:nth-child(1){top:16px;transform:rotate(45deg)}
+  .nav-toggle.active span:nth-child(2){opacity:0}
+  .nav-toggle.active span:nth-child(3){top:16px;transform:rotate(-45deg)}
+
+  @media (max-width: 1100px){
+    .topbar{padding:16px 28px;grid-template-columns:1fr auto auto;gap:16px}
+    .topbar.scrolled{padding:12px 28px}
+    .top-center .ornament{width:28px}
+    .top-center .brand{font-size:18px}
+    .top-right{
+      position:fixed;top:0;right:-100%;
+      height:100vh;width:82%;max-width:360px;
+      background:linear-gradient(180deg, var(--black-soft) 0%, var(--black) 100%);
+      flex-direction:column;justify-content:flex-start;align-items:flex-start;
+      gap:0;padding:120px 40px 40px;
+      transition:right .55s cubic-bezier(.2,.7,.2,1);
+      border-left:1px solid var(--rule);
+      box-shadow:-30px 0 80px -10px rgba(0,0,0,0.6);
+      overflow-y:auto;
+    }
+    .top-right > a, .top-right .has-drop{
+      width:100%;
+      padding:18px 0;
+      border-bottom:1px solid var(--rule-bone);
+    }
+    .top-right .has-drop > .nav-link{width:100%;justify-content:space-between}
+    .top-right.open{right:0}
+    .nav-toggle{display:block;z-index:101}
+    /* Mobile dropdown: in-flow accordion */
+    .drop-panel{
+      position:static;
+      opacity:1;visibility:visible;transform:none;
+      background:none;border:none;box-shadow:none;backdrop-filter:none;
+      padding:6px 0 0;min-width:0;
+      max-height:0;overflow:hidden;
+      transition:max-height .5s ease;
+      pointer-events:auto;
+    }
+    .drop-panel::before, .drop-panel::after{display:none}
+    .has-drop.open .drop-panel{max-height:500px}
+    .has-drop::before{display:none}
+    .drop-panel a{padding:10px 16px;font-size:13px}
+    .drop-panel a:hover{padding-left:22px}
+  }
+  @media (max-width: 560px){
+    .topbar{padding:14px 20px}
+    .topbar.scrolled{padding:11px 20px}
+    .top-left{font-size:9.5px;letter-spacing:.25em}
+    .top-left .sep-v, .top-left .label-extra{display:none}
+    .top-center .ornament{display:none}
+    .top-center .brand{font-size:17px}
+  }
+
+
+
+</style>
+</head>
+<body>
+
+<!-- TOP BAR — LUX -->
+<header class="topbar" id="topbar" role="banner">
+
+  <div class="top-left">
+    <span class="pulse" aria-hidden="true"></span>
+    <span>In Memoriam</span>
+    <span class="sep-v" aria-hidden="true"></span>
+    <span class="label-extra"></span>
+  </div>
+
+  <a href="#" class="top-center" aria-label="Lucia Stănescu — Acasă">
+    <span class="ornament left" aria-hidden="true"></span>
+    <span class="brand">Lucia <em>Stănescu</em></span>
+    <span class="ornament right" aria-hidden="true"></span>
+  </a>
+
+  <button class="nav-toggle" id="navToggle" aria-label="Deschide meniul" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <nav class="top-right" id="topRight" aria-label="Navigare principală">
+    <a href="index.html">Acasă</a>
+   
+
+    <div class="has-drop" id="galerieDrop">
+      <button type="button" class="nav-link" aria-haspopup="true" aria-expanded="false">
+        Galerie <span class="caret" aria-hidden="true"></span>
+      </button>
+      <div class="drop-panel" role="menu">
+        <a href="aida.html" role="menuitem"><span class="num">N° 01</span>Aida</a>
+        <a href="butterfly.html" role="menuitem"><span class="num">N° 02</span>Madama Butterfly</a>
+        <a href="manon.html" role="menuitem"><span class="num">N° 03</span>Manon Lescaut</a>
+        <a href="boema.html" role="menuitem"><span class="num">N° 04</span>La Bohème</a>
+        <a href="ana.html" role="menuitem"><span class="num">N° 05</span>Ana Lugojana</a>
+        <a href="Cavalleria Rusticana.html" role="menuitem"><span class="num">N° 06</span>Cavalleria Rusticana</a>
+        <a href="Evgheni Oneghin.html" role="menuitem"><span class="num">N° 07</span>Evgheni Oneghin</a>
+        <a href="faust.html" role="menuitem"><span class="num">N° 08</span>Faust</a>
+        <a href="Lohengrin.html" role="menuitem"><span class="num">N° 09</span>Lohengrin</a>
+      </div>
+    </div>
+
+    <a href="premiul.html">Premiul omagiu</a>
+    <a href="articole.html">Apariții</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="articles-hero" id="acasa">
+  <div class="articles-hero-inner">
+    <div class="ah-eyebrow">
+      <span class="l"></span>
+      <span>Mărturii · Articole · Apariții</span>
+      <span class="l"></span>
+    </div>
+
+    <h1 class="ah-title">
+      O <span class="it">moștenire</span><br>
+      consemnată
+    </h1>
+
+    <p class="ah-sub">
+      Articole, interviuri și apariții publice care păstrează vie amintirea sopranei Lucia Stănescu — o voce care a definit școala de canto clujeană și un nume aclamat pe marile scene ale lumii.
+    </p>
+
+    <div class="ah-meta-row">
+      <div class="ah-meta-item">
+        Interviuri
+        <strong>2 înregistrări</strong>
+      </div>
+      <div class="ah-meta-divider"></div>
+      <div class="ah-meta-item">
+        Concerte
+        <strong>2 arii Puccini</strong>
+      </div>
+      <div class="ah-meta-divider"></div>
+      <div class="ah-meta-item">
+        Articole
+        <strong>9+ surse</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRIBUTE QUOTE -->
+<section class="tribute-quote">
+  <span class="tribute-mark">„</span>
+  <p class="tribute-text reveal">
+    Lucia Stănescu a fost, este și va fi pentru totdeauna un nume <em>aclamat</em> pe cele mai înalte scene ale lumii.
+  </p>
+  <div class="tribute-cite reveal reveal-d1">— Opera Națională Română din Cluj-Napoca —</div>
+</section>
+
+<!-- INTERVIEWS / VIDEOS -->
+<section class="videos-section" id="interviuri">
+  <div class="ch-head reveal" style="max-width:1320px;margin:0 auto;">
+    <div class="ch-meta">
+      <div class="ch-head-num">— Capitolul 01 —</div>
+      <div class="ch-meta-item">Format <strong>Video · Interviuri</strong></div>
+      <div class="ch-meta-item">Sursă <strong>YouTube · Arhive</strong></div>
+      <div class="ch-meta-item">Subiect <strong>Mărturii directe</strong></div>
+    </div>
+    <h2 class="ch-head-title">Interviuri cu <em>Doamna Lucia</em>.</h2>
+  </div>
+
+  <div class="videos-grid">
+
+    <div class="video-card reveal">
+      <div class="video-wrap">
+        <div class="video-thumb" id="thumb1" style="background-image:url('https://i.ytimg.com/vi/EldUleo-_oo/maxresdefault.jpg')" data-video-id="EldUleo-_oo">
+          <div class="video-play">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-caption">
+        <div class="video-tag">Interviu Video</div>
+        <h3 class="video-title">Mărturie · În prim plan</h3>
+        <p class="video-desc">
+          O întâlnire cu marea soprană a Operei Române din Cluj, în care vorbește despre cariera, scenele lumii și legătura sa profundă cu opera lui Puccini.
+        </p>
+        <div class="video-source">
+          <span>Sursa · YouTube</span>
+          <a href="https://www.youtube.com/watch?v=EldUleo-_oo" target="_blank" rel="noopener">Deschide →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card reveal reveal-d1">
+      <div class="video-wrap">
+        <div class="video-thumb" id="thumb2" style="background-image:url('https://i.ytimg.com/vi/g9QTZWVVPlA/maxresdefault.jpg')" data-video-id="g9QTZWVVPlA">
+          <div class="video-play">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-caption">
+        <div class="video-tag">Interviu Video</div>
+        <h3 class="video-title">Convorbiri · Despre viață și operă</h3>
+        <p class="video-desc">
+          Un alt interviu de referință în care soprana Lucia Stănescu rememorează momente esențiale ale carierei și ale formării sale ca artistă lirică.
+        </p>
+        <div class="video-source">
+          <span>Sursa · YouTube</span>
+          <a href="https://www.youtube.com/watch?v=g9QTZWVVPlA" target="_blank" rel="noopener">Deschide →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONCERTS / ARIAS -->
+<section class="videos-section" id="concerte" style="background:linear-gradient(180deg, transparent, rgba(184,153,104,0.04), transparent)">
+  <div class="ch-head reveal" style="max-width:1320px;margin:0 auto;">
+    <div class="ch-meta">
+      <div class="ch-head-num">— Capitolul 02 —</div>
+      <div class="ch-meta-item">Format <strong>Video · Concerte · Arii</strong></div>
+      <div class="ch-meta-item">Compozitor <strong>Giacomo Puccini</strong></div>
+      <div class="ch-meta-item">Sursă <strong>Canalul oficial YouTube</strong></div>
+    </div>
+    <h2 class="ch-head-title">Concerte și <em>arii memorabile</em>.</h2>
+  </div>
+
+  <p style="max-width:780px;margin:0 auto 60px;text-align:center;font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:20px;line-height:1.6;color:var(--bone-soft);font-variation-settings:'opsz' 144;">
+    Înregistrări de concert ale marilor arii pucciniene în interpretarea Luciei Stănescu — voce dramatică, frazare nobilă, expresivitate aparte. Arhive de pe canalul oficial dedicat sopranei.
+  </p>
+
+  <div class="videos-grid">
+
+    <div class="video-card reveal">
+      <div class="video-wrap">
+        <div class="video-thumb" style="background-image:url('https://i.ytimg.com/vi/cVYffyj7BK0/maxresdefault.jpg')" data-video-id="cVYffyj7BK0">
+          <div class="video-play">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-caption">
+        <div class="video-tag">Arie · Puccini</div>
+        <h3 class="video-title">„Un bel dì vedremo"</h3>
+        <p class="video-desc">
+          Marea arie a sopranei din actul II al operei <em>Madama Butterfly</em> de Giacomo Puccini — momentul în care Cio-Cio-San visează revenirea iubitului ei. O interpretare emblematică a Luciei Stănescu, eroina pucciniană prin excelență.
+        </p>
+        <div class="video-source">
+          <span>Madama Butterfly · Puccini</span>
+          <a href="https://www.youtube.com/watch?v=cVYffyj7BK0" target="_blank" rel="noopener">Deschide →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card reveal reveal-d1">
+      <div class="video-wrap">
+        <div class="video-thumb" style="background-image:url('https://i.ytimg.com/vi/8MfUs4It2io/maxresdefault.jpg')" data-video-id="8MfUs4It2io">
+          <div class="video-play">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="video-caption">
+        <div class="video-tag">Arie · Puccini</div>
+        <h3 class="video-title">„Vissi d'arte, vissi d'amore"</h3>
+        <p class="video-desc">
+          Aria sopranei din actul II al operei <em>Tosca</em> — rugăciunea Floriei Tosca, o pagină de o intensitate spirituală rară. Una dintre cele mai înălțătoare interpretări vocale ale lui Puccini, redată cu o emoție desăvârșită.
+        </p>
+        <div class="video-source">
+          <span>Tosca · Puccini</span>
+          <a href="https://www.youtube.com/watch?v=8MfUs4It2io" target="_blank" rel="noopener">Deschide →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Channel link callout -->
+  <div style="max-width:880px;margin:80px auto 0;padding:50px 40px;border:1px solid var(--rule);text-align:center;background:linear-gradient(180deg, rgba(184,153,104,0.04), transparent);position:relative;" class="reveal">
+    <div style="font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.5em;color:var(--rust);text-transform:uppercase;margin-bottom:20px;">— Arhivă completă —</div>
+    <h4 style="font-family:'Italiana','Fraunces',serif;font-weight:400;font-size:32px;color:var(--bone);margin-bottom:18px;letter-spacing:-0.01em;">
+      Canalul oficial pe YouTube
+    </h4>
+    <p style="font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:17px;line-height:1.7;color:var(--bone-soft);margin-bottom:32px;max-width:560px;margin-left:auto;margin-right:auto;font-variation-settings:'opsz' 144;">
+      Mai multe înregistrări de concert, arii și momente din cariera sopranei pot fi descoperite pe canalul oficial <em>Lucia Stănescu — soprano</em>, dedicat integral arhivării patrimoniului ei artistic.
+    </p>
+    <a href="https://www.youtube.com/channel/UCi88fvHrV_QZqoBphAk3SCw" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:14px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;padding:16px 32px;border:1px solid var(--gold);transition:all .4s ease;" onmouseover="this.style.color='var(--gold-bright)';this.style.borderColor='var(--gold-bright)';this.style.background='rgba(184,153,104,0.06)'" onmouseout="this.style.color='var(--gold)';this.style.borderColor='var(--gold)';this.style.background='transparent'">
+      <span>Vezi canalul YouTube</span>
+      <span>→</span>
+    </a>
+  </div>
+</section>
+
+<!-- ARTICLES / PRESS COVERAGE -->
+<section class="articles-section" id="presa">
+  <div class="ch-head reveal" style="max-width:1180px;margin:0 auto;">
+    <div class="ch-meta">
+      <div class="ch-head-num">— Capitolul 03 —</div>
+      <div class="ch-meta-item">Format <strong>Articole · Cronici</strong></div>
+      <div class="ch-meta-item">Surse <strong>Presa românească</strong></div>
+      <div class="ch-meta-item">Perioadă <strong>2012 — 2025</strong></div>
+    </div>
+    <h2 class="ch-head-title">Apariții în <em>presă</em>.</h2>
+  </div>
+
+  <div class="articles-list">
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2025</div>
+        <div class="article-date-d">Sept. · Aniversare</div>
+      </div>
+      <div class="article-body">
+        <h4>Lucia Stănescu, soprană română — un portret de referință</h4>
+        <p>
+          Un portret detaliat al sopranei Lucia Stănescu, parcurgând traseul unei vieți dedicate operei: de la copilăria din Someșul Rece, anii formării la Academia Regală de Muzică, debutul la Opera Română din Cluj-Napoca, până la consacrarea internațională și activitatea pedagogică din Italia.
+        </p>
+        <div class="article-source"><em>Jurnal FM</em> &nbsp;·&nbsp; Septembrie 2025</div>
+      </div>
+      <div class="article-action">
+        <a href="https://jurnalfm.ro/lucia-stanescu/" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2020</div>
+        <div class="article-date-d">Septembrie · In Memoriam</div>
+      </div>
+      <div class="article-body">
+        <h4>S-a stins la 94 de ani Lucia Stănescu, soprană de legendă a Operei Naționale Române din Cluj</h4>
+        <p>
+          Articol comemorativ care marchează trecerea în neființă a sopranei, însoțit de un <em>interviu în exclusivitate</em> realizat în 2016, cu ocazia celei de-a 90-a aniversări, când a revenit pe scena debutului pentru un spectacol omagial cu „Aida" de Verdi.
+        </p>
+        <div class="article-source"><em>Radio Domeldo</em> &nbsp;·&nbsp; 7 octombrie 2020</div>
+      </div>
+      <div class="article-action">
+        <a href="https://radiodomeldo.ro/arhive/4504" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2020</div>
+        <div class="article-date-d">25 Sept. · In Memoriam</div>
+      </div>
+      <div class="article-body">
+        <h4>S-a stins din viață soprana Lucia Stănescu</h4>
+        <p>
+          Anunțul oficial al Radio România Muzical despre trecerea în neființă a marii soprane, însoțit de un parcurs biografic care evocă <em>Premiul I la Concursul Internațional de Canto din Moscova</em>, debutul în rolul Cherubino din „Nunta lui Figaro" și directoratul Operei clujene.
+        </p>
+        <div class="article-source"><em>Radio România Muzical</em> &nbsp;·&nbsp; 25 septembrie 2020</div>
+      </div>
+      <div class="article-action">
+        <a href="https://rrmplayer.srr.ro/stiri/stire.htm?c=48&g=5&arh=1&y=2020&a=2825771" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2020</div>
+        <div class="article-date-d">Septembrie · Tribut</div>
+      </div>
+      <div class="article-body">
+        <h4>Soprana Lucia Stănescu s-a stins din viață la vârsta de 94 de ani — singura femeie director al Operei din Cluj</h4>
+        <p>
+          Un omagiu cu nuanțe istorice, semnat de istoricul Varga Attila, care reamintește că Lucia Stănescu a fost <em>singura femeie director</em> în istoria de un secol a Operei Naționale Române din Cluj-Napoca. Articolul include și un interviu din 2012 realizat la lansarea autobiografiei.
+        </p>
+        <div class="article-source"><em>Transilvania Reporter</em> &nbsp;·&nbsp; 25 septembrie 2020</div>
+      </div>
+      <div class="article-action">
+        <a href="https://transilvaniareporter.ro/actualitate/soprana-lucia-stanescu-s-a-stins-din-viata-la-varsta-de-94-de-ani-a-fost-singura-femeie-director-a-operei-din-cluj/" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2020</div>
+        <div class="article-date-d">Septembrie · Tribut</div>
+      </div>
+      <div class="article-body">
+        <h4>Soprana Lucia Stănescu, pe drumul veșniciei</h4>
+        <p>
+          Articol omagial al Radio Renașterea, cu citate ale Simonei Dordea, consultant de imagine al Operei Naționale Române din Cluj: <em>„Nu a fost doar solistă a Operei Române din Cluj-Napoca, ci a şi condus instituţia cu deplină dăruire."</em>
+        </p>
+        <div class="article-source"><em>Radio Renașterea</em> &nbsp;·&nbsp; 29 septembrie 2020</div>
+      </div>
+      <div class="article-action">
+        <a href="https://radiorenasterea.ro/soprana-lucia-stanescu-pe-drumul-vesniciei/" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2020</div>
+        <div class="article-date-d">29 Sept. · In Memoriam</div>
+      </div>
+      <div class="article-body">
+        <h4>A murit Lucia Stănescu, soprana Operei Naționale din Cluj-Napoca</h4>
+        <p>
+          Articol cu detalii despre programul comemorărilor publice — priveghiul de la Academia Națională de Muzică „Gheorghe Dima", garda de doliu din foaierul Operei Naționale Române din Cluj-Napoca și slujba de înmormântare de la Capela Cimitirului Central.
+        </p>
+        <div class="article-source"><em>Gazeta de Cluj</em> &nbsp;·&nbsp; 29 septembrie 2020</div>
+      </div>
+      <div class="article-action">
+        <a href="https://gazetadecluj.ro/a-murit-lucia-stanescu-soprana-operei-nationale-din-cluj-napoca-aceasta-avea-94-de-ani/" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2020</div>
+        <div class="article-date-d">Septembrie · Tribut</div>
+      </div>
+      <div class="article-body">
+        <h4>S-a stins din viață soprana Lucia Stănescu, de la Opera Națională Română din Cluj-Napoca</h4>
+        <p>
+          Un articol detaliat care evocă debutul în rolul Cherubino, repertoriul internațional, premiile câștigate în tinerețe — inclusiv <em>Premiul I la Concursul Tinerilor Soliști</em> și <em>Premiul I la Moscova</em> — și activitatea pedagogică ulterioară la Conservatorul „Pietro Mascagni" din Livorno.
+        </p>
+        <div class="article-source"><em>Știri de Cluj</em> &nbsp;·&nbsp; 29 septembrie 2020</div>
+      </div>
+      <div class="article-action">
+        <a href="https://www.stiridecluj.ro/social/s-a-stins-din-viata-soprana-lucia-stanescu-de-la-opera-nationala-romana-din-cluj-napoca" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2020</div>
+        <div class="article-date-d">29 Sept. · Cultură</div>
+      </div>
+      <div class="article-body">
+        <h4>Soprana Lucia Stănescu de la Opera Națională din Cluj a decedat la 94 de ani</h4>
+        <p>
+          Acoperire jurnalistică a vieții și carierei sopranei, cu sublinierea că aceasta a fost <em>singura femeie director din istoria Operei din Cluj</em>, condusă timp de cinci ani între 1969 și 1974.
+        </p>
+        <div class="article-source"><em>Actual de Cluj</em> &nbsp;·&nbsp; 29 septembrie 2020</div>
+      </div>
+      <div class="article-action">
+        <a href="https://actualdecluj.ro/soprana-lucia-stanescu-de-la-opera-nationala-din-cluj-a-decedat-la-94-de-ani/" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2020</div>
+        <div class="article-date-d">Oct. · Cultură clujeană</div>
+      </div>
+      <div class="article-body">
+        <h4>A murit soprana Lucia Stănescu</h4>
+        <p>
+          Publicație culturală locală care marchează plecarea sopranei și evocă <em>„Visați, visați, visați!"</em> — îndemnul cu care Lucia Stănescu și-a încheiat discursul de pe scena Operei la cea de-a 90-a aniversare, devenit un motto atemporal păstrat în memoria colegilor și a publicului clujean.
+        </p>
+        <div class="article-source"><em>Clujul Cultural</em> &nbsp;·&nbsp; Octombrie 2020</div>
+      </div>
+      <div class="article-action">
+        <a href="https://clujulcultural.ro/a-murit-soprana-lucia-stanescu/" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2017</div>
+        <div class="article-date-d">Mai · Enciclopedie</div>
+      </div>
+      <div class="article-body">
+        <h4>Stănescu, Lucia — Memorie și cunoaștere locală</h4>
+        <p>
+          Articol enciclopedic al Bibliotecii Județene „Octavian Goga" din Cluj, care detaliază contribuția artistică, distincțiile primite — inclusiv titlul de <em>Cetățean de Onoare al municipiului Cluj-Napoca</em> — și omagiul autorităților din Someșul Rece, satul natal, care au atribuit Căminului Cultural local numele marii soprane.
+        </p>
+        <div class="article-source"><em>Biblioteca Județeană Cluj</em> &nbsp;·&nbsp; 23 mai 2017</div>
+      </div>
+      <div class="article-action">
+        <a href="https://www.bjc.ro/wiki/index.php/St%C4%83nescu,_Lucia" target="_blank" rel="noopener" class="article-link">
+          Citește articolul →
+        </a>
+      </div>
+    </div>
+
+    <div class="article-row reveal">
+      <div class="article-date">
+        <div class="article-date-y">2012</div>
+        <div class="article-date-d">Autobiografie</div>
+      </div>
+      <div class="article-body">
+        <h4>„A fost o viață sau un vis?" — Lansarea autobiografiei</h4>
+        <p>
+          La onorabila vârstă de 86 de ani, Lucia Stănescu și-a lansat autobiografia — <em>o mărturie a vieții și a artei sale care impresionează și astăzi</em>. Cartea reunește amintiri din copilărie, anii formării, scenele lumii și relația cu marile eroine pucciniene pe care le-a interpretat.
+        </p>
+        <div class="article-source"><em>Volum autobiografic</em> &nbsp;·&nbsp; 2012</div>
+      </div>
+      <div class="article-action">
+        <span class="article-link" style="cursor:default;border-color:transparent;color:var(--stone)">Volum tipărit</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CLOSING / TRIBUTE -->
+<section class="tribute-quote">
+  <span class="tribute-mark">„</span>
+  <p class="tribute-text reveal">
+    <em>Visați, visați, visați!</em> — un motto atemporal și înălțător, pe care îl vom păstra mereu în suflete alături de amintirea sa.
+  </p>
+  <div class="tribute-cite reveal reveal-d1">— Discurs la cea de-a 90-a aniversare, 2016 —</div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="foot-name">Articole <em>& Apariții</em></div>
+      <div class="foot-dates">Mărturii despre Lucia Stănescu · 1926 — 2021</div>
+      <p class="foot-blurb">
+        „Artistă lirică de faimă internațională, soprană cu o voce splendidă și unică — un nume aclamat pe cele mai înalte scene ale lumii."
+      </p>
+    </div>
+    <div class="foot-col">
+      <h5>Capitole</h5>
+      <ul>
+        <li><em>I.</em> Interviuri video</li>
+        <li><em>II.</em> Concerte și arii</li>
+        <li><em>III.</em> Apariții în presă</li>
+        <li><em>IV.</em> Autobiografie</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Surse</h5>
+      <ul>
+        <li><em>·</em> Radio Domeldo</li>
+        <li><em>·</em> Radio România Muzical</li>
+        <li><em>·</em> Transilvania Reporter</li>
+        <li><em>·</em> Jurnal FM · Biblioteca Cluj</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-base">
+    <div>Articole &nbsp;·&nbsp; Volumul III</div>
+    <div>Tribut · Soprană a Operei Române din Cluj-Napoca</div>
+  </div>
+</footer>
+
+<script>
+  const topbar = document.getElementById('topbar');
+  window.addEventListener('scroll', () => {
+    topbar.classList.toggle('scrolled', window.scrollY > 80);
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const topRight = document.getElementById('topRight');
+  navToggle.addEventListener('click', () => topRight.classList.toggle('open'));
+  topRight.querySelectorAll('a').forEach(a => a.addEventListener('click', () => topRight.classList.remove('open')));
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -80px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Lazy-load YouTube on thumbnail click
+  document.querySelectorAll('.video-thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      const id = thumb.getAttribute('data-video-id');
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      iframe.title = 'Interviu video';
+      thumb.parentNode.replaceChild(iframe, thumb);
+    });
+  });
+
+  // Fallback thumbnails — if maxres image fails, try hqdefault
+  document.querySelectorAll('.video-thumb').forEach(thumb => {
+    const bg = thumb.style.backgroundImage;
+    const id = thumb.getAttribute('data-video-id');
+    if (id) {
+      const testImg = new Image();
+      testImg.onerror = () => {
+        thumb.style.backgroundImage = `url('https://i.ytimg.com/vi/${id}/hqdefault.jpg')`;
+      };
+      testImg.src = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+      // YouTube sometimes returns a 120x90 placeholder for missing maxres; check after load
+      testImg.onload = () => {
+        if (testImg.naturalWidth <= 120) {
+          thumb.style.backgroundImage = `url('https://i.ytimg.com/vi/${id}/hqdefault.jpg')`;
+        }
+      };
+    }
+  });
+</script>
+
+</body>
+</html>
